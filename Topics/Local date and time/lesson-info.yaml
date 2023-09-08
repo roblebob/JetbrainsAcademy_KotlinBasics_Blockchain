@@ -1,0 +1,7 @@
+content:
+  - Theory
+  - Correctly initiate LocalDateTime
+  - LocalDateTime constructors
+  - Valid LocalDateTime and LocalDate properties
+  - LocalDate constructors
+  - Print date

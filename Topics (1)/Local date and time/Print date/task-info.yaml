@@ -1,0 +1,26 @@
+type: code
+files:
+  - name: src/Main.kt
+    visible: true
+    highlight_level: NONE
+    text: |-
+      import kotlinx.datetime.*
+      
+      fun printDate(date: String) {
+          // Write your code here
+      
+          //
+      }
+      
+      fun main() {
+          val date = readln()
+          printDate(date)
+      }
+    learner_created: false
+feedback_link: https://hyperskill.org/learn/step/19503#comment
+status: Solved
+feedback:
+  message: <html>Correct solution</html>
+  time: "Fri, 08 Sep 2023 09:45:28 UTC"
+record: -1
+submission_language: kotlin

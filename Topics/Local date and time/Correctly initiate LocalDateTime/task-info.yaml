@@ -1,0 +1,21 @@
+type: choice
+is_multiple_choice: true
+options:
+  - text: <code>"2022-12-31T10:10:00".toLocalDateTime()</code>
+  - text: <code>"2022-12-31T10:10:00".toLocalDate()</code>
+  - text: "<code>LocalDateTime(2022, 1, 1, 20)</code>"
+  - text: <code>Instant.parse("2022-01-01T19:00:00Z").toLocalDateTime(TimeZone.currentSystemDefault())</code>
+files:
+  - name: src/Main.kt
+    visible: true
+    text: |
+      // You can experiment here, it won’t be checked
+      
+      fun main(args: Array<String>) {
+        // put your code here
+      }
+    learner_created: false
+feedback_link: https://hyperskill.org/learn/step/19497#comment
+status: Solved
+record: -1
+local_check: false

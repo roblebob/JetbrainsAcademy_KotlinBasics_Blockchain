@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id=":Topics-Local_date_and_time-Print_date" external.linked.project.path="$MODULE_DIR$/../../../../../Topics/Local date and time/Print date" external.root.project.path="$MODULE_DIR$/../../../../.." external.system.id="GRADLE" external.system.module.group="JetbrainsAcademy_KotlinBasics_Blockchain" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../../../Topics/Local date and time/Print date">
+      <excludeFolder url="file://$MODULE_DIR$/../../../../../Topics/Local date and time/Print date/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../../../Topics/Local date and time/Print date/build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../../../Topics/Local date and time/Print date/out" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
