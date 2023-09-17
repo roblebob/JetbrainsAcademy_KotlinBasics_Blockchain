@@ -4,7 +4,7 @@ import java.security.MessageDigest
 
 val T_MIN = 100
 val T_MAX = 1000
-val N_MINERS = 10
+val N_MINERS = 5
 
 val NAMES = listOf("Tom", "Sarah", "Nick", "John", "Mary", "Alex", "Steve", "Anna")
 
@@ -27,7 +27,6 @@ fun main() {
         it.start()
     }
     miners.forEach { it.join() }
-    Blockchain.print()
     println(Blockchain.validateAll())
 }
 
@@ -39,9 +38,10 @@ class Miner(val id: Int) : Thread() {
     override fun run() {
 
         do {
-            val block = Block(Blockchain.size + 1 ,
+            val block = Block(
+                Blockchain.size + 1 ,
                 Blockchain.getLastHash(),
-                Blockchain.nZeros,
+                Blockchain.getNZeros(),
                 id,
                 Blockchain.getMessages(),
                 Blockchain.getLastTime()
@@ -50,7 +50,7 @@ class Miner(val id: Int) : Thread() {
 
         // ... so first message is definitely added after first block was created
         try {
-            Blockchain.addMessages("${NAMES.random()}: ${MESSAGES.random()}}")
+            Blockchain.addMessage("$id  ${NAMES.random()}: ${MESSAGES.random()}}")
         } catch (e: Exception) {
             println("----->" + e.message)
         }
@@ -65,19 +65,18 @@ class Miner(val id: Int) : Thread() {
 
 object Blockchain {
 
-    @Volatile
-    var nZeros: Int = 0
+
 
     private val chain : MutableList<Block> = mutableListOf()
     private val messages : MutableList<String> = mutableListOf()
 
 
     fun getMessages(): MutableList<String> {
-        return messages
+        return messages.toMutableList()
     }
 
     @Synchronized
-    fun addMessages(message: String) {
+    fun addMessage(message: String) {
         messages.add(message)
     }
 
@@ -89,33 +88,41 @@ object Blockchain {
 
 
 
-    @get:Synchronized
+
     val size: Int
         get() = chain.size
 
-    @Synchronized
+
     fun getLastHash(): String {
         return if (chain.isEmpty()) "0" else chain.last().hash
     }
 
-    @Synchronized
+
     fun getLastTime() : Long {
         return if (chain.isEmpty()) System.currentTimeMillis() else chain.last().tAfter
     }
 
 
+    fun getNZeros(): Int {
+        return if (chain.isEmpty()) 0 else chain.last().futureNZeros
+    }
+
+
     @Synchronized
     fun validateAndAdd(candidate: Block, ): Boolean {
-        if (((chain.isEmpty() && candidate.previousHash == "0") ||
-            chain.last().hash == candidate.previousHash)
+        if (
+            candidate.id == chain.size + 1
             &&
-            candidate.hash.substring(0, nZeros) == "0".repeat(nZeros) )
+            (
+                    (chain.isEmpty() && candidate.previousHash == "0")
+                            || chain.last().hash == candidate.previousHash
+                    )
+            &&
+            candidate.hash.substring(0, candidate.nZeros) == "0".repeat(candidate.nZeros)
+
+            )
         {
             chain.add(candidate)
-            when {
-                chain.last().forDuration < T_MIN -> nZeros++
-                chain.last().forDuration > T_MAX -> nZeros--
-            }
             print()
             removeMessages(candidate.messages)
             return true
@@ -168,10 +175,10 @@ Hash of the block:
 ${o.hash}
 Block data: ${if (o.messages.isEmpty()) "no messages" else "\n" + o.messages.joinToString("\n")}
 Block was generating for ${o.forDuration} seconds   (${o.nTrials} attempts)
-${  when (nZeros - o.nZeros) {
-        1 -> "N was increased to $nZeros"
-        -1 -> "N was decreased by 1 ($nZeros)"
-        else -> "N stays the same ($nZeros)"
+${  when (o.futureNZeros - o.nZeros) {
+        1 -> "N was increased to ${o.futureNZeros}"
+        -1 -> "N was decreased by 1 (${o.futureNZeros})"
+        else -> "N stays the same (${o.futureNZeros})"
     }}
 """)
     }
@@ -191,6 +198,7 @@ class Block(val id: Int,
             val tBefore: Long,
 ) {
     val t0: Long = System.currentTimeMillis()
+
     var tAfter: Long
     var nTrials: Int = 0
     var magicNumber: Int
@@ -203,11 +211,20 @@ class Block(val id: Int,
     val forDuration: Long
         get() = tAfter - tBefore
 
+    val futureNZeros: Int
+        get() =  when {
+            forDuration < T_MIN -> nZeros + 1
+            forDuration > T_MAX -> nZeros - 1
+            else -> nZeros
+        }
+
+
     init {
         do {
             magicNumber = (0..Int.MAX_VALUE).random()
             nTrials++
             tAfter = System.currentTimeMillis()
+
 
         } while (hash.substring(0, nZeros) != "0".repeat(nZeros))
     }
