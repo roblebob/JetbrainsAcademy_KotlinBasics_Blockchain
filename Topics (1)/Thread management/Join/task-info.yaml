@@ -1,0 +1,23 @@
+type: choice
+is_multiple_choice: false
+options:
+  - text: <code>thread</code> waits for the completion of the current thread
+  - text: "It's impossible to call join on an object of another thread, you can call\
+    \ it only on the current thread"
+  - text: It stops the current thread until <code>continue</code> is called
+  - text: Threads will be merged into one
+  - text: The current thread waits for the completion of <code>thread</code>
+files:
+  - name: src/Main.kt
+    visible: true
+    text: |
+      // You can experiment here, it won’t be checked
+      
+      fun main(args: Array<String>) {
+        // put your code here
+      }
+    learner_created: false
+feedback_link: https://hyperskill.org/learn/step/16202#comment
+status: Solved
+record: -1
+local_check: false

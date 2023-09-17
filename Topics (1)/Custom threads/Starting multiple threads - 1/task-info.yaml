@@ -1,0 +1,35 @@
+type: code
+files:
+  - name: src/Main.kt
+    visible: true
+    highlight_level: NONE
+    text: |-
+      fun main() {
+          // create instances and start threads here
+      
+      }
+      
+      // Don't change the code below
+      class WorkerThread(name: String) : Thread(name) {
+          val numberOfLines = 3
+      
+          override fun run() {
+              val name = currentThread().name
+      
+              if (!name.startsWith("worker-")) {
+                  return
+              }
+      
+              for (i in 0 until numberOfLines) {
+                  println("do something...")
+              }
+          }
+      }
+    learner_created: false
+feedback_link: https://hyperskill.org/learn/step/16014#comment
+status: Solved
+feedback:
+  message: <html>Correct solution</html>
+  time: "Tue, 12 Sep 2023 20:20:20 UTC"
+record: -1
+submission_language: kotlin

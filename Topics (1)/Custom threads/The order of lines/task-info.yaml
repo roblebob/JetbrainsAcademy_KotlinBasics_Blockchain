@@ -1,0 +1,26 @@
+type: choice
+is_multiple_choice: false
+options:
+  - text: "<b>Finished</b> is always the last line in the output, two other lines can\
+    \ be printed in any order"
+  - text: The lines may be printed out in any order
+  - text: The lines are always in the same order <br>Hello from My-thread-1<br>Hello
+      from My-thread-2<br>Finished
+  - text: The lines are always in the same order:<br>Finished<br>Hello from My-thread-1<br>Hello
+      from My-thread-2
+  - text: The lines are always in the same order:<br>Hello from My-thread-1<br>Finished<br>Hello
+      from My-thread-2
+files:
+  - name: src/Main.kt
+    visible: true
+    text: |
+      // You can experiment here, it won’t be checked
+      
+      fun main(args: Array<String>) {
+        // put your code here
+      }
+    learner_created: false
+feedback_link: https://hyperskill.org/learn/step/16007#comment
+status: Solved
+record: -1
+local_check: false

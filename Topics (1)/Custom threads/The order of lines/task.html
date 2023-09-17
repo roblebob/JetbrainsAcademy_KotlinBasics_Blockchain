@@ -1,0 +1,21 @@
+<h2>The order of lines</h2>
+<div class="step-text">
+<p></p>
+<p>Here's a class that extends the <code class="language-kotlin">Thread</code><strong> </strong>class and overrides the <code class="language-kotlin">run</code> method:</p>
+<pre><code class="language-kotlin">class MyThread(name: String) : Thread(name) {
+    override fun run() {
+        println("Hello from $name")
+    }
+}</code></pre>
+<p>Take a look at a code snippet:</p>
+<pre><code class="language-kotlin">fun main() {
+    val t1 = MyThread("My-thread-1")
+    t1.start()
+
+    val t2 = MyThread("My-thread-2")
+    t2.start()
+
+    println("Finished")
+}</code></pre>
+<p>Select the correct statement about the order of lines in the output:</p>
+</div>

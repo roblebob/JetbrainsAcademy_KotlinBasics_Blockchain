@@ -1,0 +1,14 @@
+<h2>Starting multiple threads - 1</h2>
+<div class="step-text">
+<p></p>
+<p>Here's a class that extends the <strong>Thread</strong> class.</p>
+<pre><code class="language-kotlin">class WorkerThread(name: String) : Thread(name) {
+    override fun run() {
+        // the method does something
+    }
+}
+</code></pre>
+<p>1) Create two instances of the given class and set the names like <strong>"worker-X"</strong>, where X is any suffix (use the constructor to set a name).</p>
+<p>2) Start the created threads. The method <strong>run</strong> of each instance must be executed in a new thread.</p>
+<p><strong>Note: </strong>the given class will be added to your solution automatically.</p><br><br><font color="gray">Memory limit: 256 MB</font><br><font color="gray">Time limit: 8 seconds</font><br><br>
+</div>

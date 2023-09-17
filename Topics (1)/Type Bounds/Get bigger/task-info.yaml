@@ -1,0 +1,19 @@
+type: code
+custom_name: Get bigger!
+files:
+  - name: src/Main.kt
+    visible: true
+    highlight_level: NONE
+    text: |-
+      // finish it!
+      fun <T> getBigger(a: T, b: T): T {
+      
+      }
+    learner_created: false
+feedback_link: https://hyperskill.org/learn/step/16942#comment
+status: Solved
+feedback:
+  message: <html>Correct solution</html>
+  time: "Mon, 11 Sep 2023 16:44:38 UTC"
+record: -1
+submission_language: kotlin

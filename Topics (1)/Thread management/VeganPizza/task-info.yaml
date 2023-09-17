@@ -1,0 +1,63 @@
+type: code
+files:
+  - name: src/Main.kt
+    visible: true
+    highlight_level: NONE
+    text: |-
+      // Fix this function
+      fun cookVeganPizza() {
+          val base = Base()
+          val tomatoes = Tomatoes()
+          val tofu = Tofu()
+          val bake = Bake()
+          val stepOfCook: MutableList<Thread> = mutableListOf()
+          stepOfCook.add(base)
+          stepOfCook.add(tomatoes)
+          stepOfCook.add(tofu)
+          stepOfCook.add(bake)
+          for (step in stepOfCook) {
+              step.start()
+          }
+      }
+      
+      // Do not change the code below
+      
+      class Base : Thread() {
+          override fun run() {
+              println("cook base")
+          }
+      }
+      
+      class Tomatoes : Thread() {
+          override fun run() {
+              for (i in 3 downTo 1) {
+                  println("slice tomatoes $i")
+              }
+          }
+      }
+      
+      class Tofu : Thread() {
+          override fun run() {
+              println("fry tofu")
+          }
+      }
+      
+      class Bake : Thread() {
+          override fun run() {
+              for (i in 4 downTo 0) {
+                  if (i == 0) {
+                      println("Your pizza is ready!")
+                      break
+                  }
+                  println("to bake...$i min")
+              }
+          }
+      }
+    learner_created: false
+feedback_link: https://hyperskill.org/learn/step/16206#comment
+status: Solved
+feedback:
+  message: <html>Correct solution</html>
+  time: "Wed, 13 Sep 2023 07:56:20 UTC"
+record: -1
+submission_language: kotlin

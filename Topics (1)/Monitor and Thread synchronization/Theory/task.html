@@ -1,0 +1,87 @@
+<h2>Monitor and Thread synchronization</h2>
+<div class="step-text">
+<p>In the previous topic, you've learned what thread synchronization is, why it is important, and how we can realize it in Kotlin. Now, let's see what a <strong>monitor</strong> is and how we use it to implement thread synchronization.</p><h5 id="example-a-synchronized-counter">Example: a synchronized counter</h5><p>Let's take a look at an example and remember how we do synchronization in code. It's a synchronized counter with two synchronized methods: <code class="language-kotlin">increment</code> and <code class="language-kotlin">getValue</code>.</p><pre><code class="language-kotlin">class SynchronizedCounter {
+
+    var count = 0
+
+    @Synchronized
+    fun increment() {
+        count++
+    }
+
+    @Synchronized
+    fun getValue(): Int {
+        return count
+    }
+}</code></pre><p>When multiple threads invoke <code class="language-kotlin">increment</code> on the same instance, no problem arises because the annotation <code class="language-kotlin">@Synchronized</code> protects the shared field. Only one thread can change the field – other threads will wait until the thread releases the monitor. All changes of the variable <code class="language-kotlin">count</code><strong> </strong>are visible.</p><p>The method <code class="language-kotlin">getValue</code> doesn't modify the field – it only reads the current value. The method is synchronized so that the reading thread always reads the actual value; otherwise, there is no guarantee that the reading thread will see the updated value of <code class="language-kotlin">count</code> after it's changed.</p><p>Here is a class called <code class="language-kotlin">WorkerThread</code> that extends <code class="language-kotlin">Thread</code>. The class takes an instance of <code class="language-kotlin">SynchronizedCounter</code> and calls the method <code class="language-kotlin">increment</code> 10 000 000 times.</p><pre><code class="language-kotlin">class WorkerThread(val counter: SynchronizedCounter) : Thread() {
+    override fun run() {
+        for (i in 1..10_000_000) {
+            counter.increment()
+        }
+    }
+}</code></pre><p>The following code creates an instance of <code class="language-kotlin">SynchronizedCounter</code>, starts threads, and prints the result.</p><pre><code class="language-kotlin">fun main() {
+    val counter = SynchronizedCounter()
+
+    val worker1 = WorkerThread(counter)
+    val worker2 = WorkerThread(counter)
+
+    worker1.start()
+    worker2.start()
+
+    worker1.join()
+    worker2.join()
+
+    println(counter.getValue()) // the result is 20_000_000
+}</code></pre><p>Sometimes,  however, there's no need to synchronize the methods that only read shared data (including getters):</p><ul><li><p>If we have a guarantee that the thread successfully returns from <code class="language-kotlin">join</code> when it reads a field. That's true about the code above, and we can remove the <code class="language-kotlin">synchronized</code> annotation from the declaration of <code class="language-kotlin">getValue</code>.</p></li></ul><ul><li><p>If a shared field is declared with the <code class="language-kotlin">@Volatile</code> annotation.<strong> </strong>In that case, all writes to this field are immediately made visible to other threads.</p></li></ul><h5 id="monitor-and-multithreading">Monitor and multithreading</h5><p>From the previous example, you can see that synchronization allows us to protect critical sections from simultaneous changes by multiple threads. In the previous topic, we already briefly mentioned the <strong>monitor</strong>.</p><p>The <strong>monitor</strong> is a special mechanism in Kotlin to control concurrent access to objects.</p><p>In Kotlin JVM, each object has an associated implicit monitor. So, when a thread captures some object, it blocks other threads' access to the object's monitor. Therefore, multiple threads cannot acquire an object's monitor at the same time. A monitor can only be acquired by one thread, others will wait until the owner (the thread that acquired the monitor) releases it.</p><p>Thus, a thread can be locked by the monitor of an object and wait for its release. This mechanism allows programmers to protect <strong>critical sections </strong>from being accessed<strong> </strong>by multiple threads concurrently.</p><p>However, this mechanism can lead to a <strong>deadlock </strong>when several processes are in a state of waiting for resources occupied by each other and none of them can continue their execution. So, you should use synchronization carefully and know how the blocking monitor works in different situations.</p><h5 id="one-monitor-and-multiple-synchronized-methods-and-blocks">One monitor and multiple synchronized methods and blocks</h5><p><strong>Important:</strong> an object has only one monitor, and only one thread can execute synchronized code on the same monitor. </p><p>It means that if a class has several synchronized methods and a thread invokes one of them, other threads cannot execute either of these methods on the same instance until the first thread releases the monitor of the instance.</p><p>So, the annotation <code class="language-kotlin">@Synchronized</code> and the function <code class="language-kotlin">synchronized()</code> lock the monitor of the object to which the linked function or block belongs. If we have two instances of a class, each instance has a monitor for synchronizing.</p><p>Here is an example: a class with three methods. Two methods are synchronized and the third one has an internal synchronized block. Both methods and the block are synchronized on the monitor of <code class="language-kotlin">this</code> instance.</p><pre><code class="language-kotlin">class SomeClass {
+
+    @Synchronized
+    fun method1() {
+        // do something useful
+    }
+
+    @Synchronized
+    fun method2() {
+        // do something useful
+    }
+
+    fun method3() {
+        synchronized(this) {
+            // do something useful
+        }
+    }
+}</code></pre><p>If a thread invokes <code class="language-kotlin">method1</code> and executes the statements inside the method, no other thread can execute the statements inside <code class="language-kotlin">method2</code> or in the synchronized block in <code class="language-kotlin">method3</code> because <code class="language-kotlin">this</code> monitor is already acquired. The threads will wait for the release of the monitor.</p><p>The same behavior applies when a class monitor is used.</p><h5 id="reentrant-synchronization">Reentrant synchronization</h5><p>A thread cannot acquire a lock owned by another thread – but it can acquire a lock that it already owns. This behavior is called <strong>reentrant synchronization</strong>.</p><p>Take a look at the following example:</p><pre><code class="language-kotlin">class SomeClass {
+
+    @Synchronized
+    fun method1() {
+        method2() // legal invocation because the thread has acquired the monitor of SomeClass
+    }
+
+    @Synchronized
+    fun method2() {
+        // do something useful
+    }
+}</code></pre><p>The code above is correct. When a thread is inside <code class="language-kotlin">method1</code>, it can invoke <code class="language-kotlin">method2</code> because both methods are synchronized on the same object (<code class="language-kotlin">SomeClass</code>).</p><h5 id="fine-grained-synchronization">Fine-grained synchronization</h5><p>Sometimes, a class has several fields that are never used together. It's possible to protect these fields by using the same monitor, but in this case, only one thread will be able to access one of these fields, despite their independence. To improve the concurrency rate, it's possible to use an idiom with additional objects as monitors.</p><p>Here is an example: a class with two methods. The class stores the number of calls to each method in a special field.</p><pre><code class="language-kotlin">class SomeClass {
+
+    var numberOfCallingMethod1 = 0
+    var numberOfCallingMethod2 = 0
+
+    val lock1 = Any() // an object for locking
+    val lock2 = Any() // another object for locking
+
+    fun method1() {
+        println("method1...")
+
+        synchronized(lock1) {
+            numberOfCallingMethod1++
+        }
+    }
+
+    fun method2() {
+        println("method2...")
+
+        synchronized(lock2) {
+            numberOfCallingMethod2++
+        }
+    }
+}</code></pre><p>As you can see, the class has two additional fields that are the locks for separating monitors for each critical section.</p><p>If we have an instance of the class, one thread may work inside the synchronized block of the first method and, at the same time, another thread may work inside the synchronized block of the second method.</p><h5 id="conclusion">Conclusion</h5><p>In this topic, we've learned the ways of implementing the mechanism of thread synchronization. Remember, code protected by the synchronization mechanism can be executed only by one thread at a time. That reduces the parallelism and responsiveness of the program.</p><p>Do not synchronize all your code. Try to use synchronization only when it is really necessary. Determine small parts of code to be synchronized. Sometimes, if a method is complex, it's better to use a synchronization block instead of synchronizing the whole method.</p>
+</div>

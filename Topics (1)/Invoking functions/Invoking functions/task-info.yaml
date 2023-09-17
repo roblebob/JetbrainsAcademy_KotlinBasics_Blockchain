@@ -1,0 +1,14 @@
+type: code
+files:
+  - name: src/Main.kt
+    visible: true
+    text: "fun main() { \n    val number = readln().toDouble() \n    val logNumber =\
+    \ Math.log10 number // fix this line\n    println(logNumber) \n}"
+    learner_created: false
+feedback_link: https://hyperskill.org/learn/step/23010#comment
+status: Solved
+feedback:
+  message: <html>Correct solution</html>
+  time: "Thu, 14 Sep 2023 10:31:28 UTC"
+record: -1
+submission_language: kotlin

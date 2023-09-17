@@ -3,17 +3,17 @@ hyperskill_project:
   ide_files: https://cogniterra.org/media/attachments/lesson/26636/additional_files.json
   is_template_based: false
   use_ide: true
-update_date: "Fri, 08 Sep 2023 11:45:21 UTC"
+update_date: "Sun, 17 Sep 2023 00:23:41 UTC"
 stages:
   - id: 1325
     step: 20392
     is_completed: true
   - id: 1326
     step: 20393
-    is_completed: false
+    is_completed: true
   - id: 1327
     step: 20394
-    is_completed: false
+    is_completed: true
   - id: 1328
     step: 20395
     is_completed: false
@@ -25,6 +25,8 @@ stages:
     is_completed: false
 topics:
   0:
+    - title: Modulo division
+      theory_id: 10586
     - title: Binary numbers
       theory_id: 5544
     - title: Hexadecimal numbers
@@ -39,16 +41,12 @@ topics:
       theory_id: 16927
     - title: Units of information
       theory_id: 6865
-    - title: Introduction to Operating systems
-      theory_id: 9704
-    - title: Command line overview
-      theory_id: 8977
     - title: "Write, compile, and run"
       theory_id: 3739
+    - title: Command line overview
+      theory_id: 8977
     - title: Parameters and Options
       theory_id: 9746
-    - title: IDE
-      theory_id: 10996
     - title: "JVM, JRE, and JDK"
       theory_id: 3499
     - title: Pseudocode
@@ -214,6 +212,8 @@ topics:
     - title: The try-catch-finally statement
       theory_id: 11809
   1:
+    - title: Introduction to Operating systems
+      theory_id: 9704
     - title: Stack
       theory_id: 5252
     - title: Files

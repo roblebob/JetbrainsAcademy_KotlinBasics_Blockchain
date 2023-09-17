@@ -1,0 +1,23 @@
+type: choice
+is_multiple_choice: false
+options:
+  - text: Some time later after starting <b>worker</b> using the <b>start()</b> method
+  - text: Only after the <b>main</b> thread has finished
+  - text: Immediately after creating the object <b>worker</b>
+  - text: Immediately after creating the object <b>task</b>
+  - text: Immediately after starting <b>worker</b> using the <b>start()</b> method
+files:
+  - name: src/Main.kt
+    visible: true
+    text: |
+      // You can experiment here, it won’t be checked
+      
+      fun main(args: Array<String>) {
+        // put your code here
+      }
+    learner_created: false
+feedback_link: https://hyperskill.org/learn/step/16009#comment
+status: Solved
+record: -1
+custom_name: When will a thread start performing a task?
+local_check: false

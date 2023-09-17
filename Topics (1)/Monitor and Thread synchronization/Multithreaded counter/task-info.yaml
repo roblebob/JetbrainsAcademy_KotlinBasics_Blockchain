@@ -1,0 +1,21 @@
+type: code
+files:
+  - name: src/Main.kt
+    visible: true
+    highlight_level: NONE
+    text: |-
+      class Counter {
+          var count = 0
+      
+          fun inc() {
+              count++
+          }
+      }
+    learner_created: false
+feedback_link: https://hyperskill.org/learn/step/17903#comment
+status: Solved
+feedback:
+  message: <html>Correct solution</html>
+  time: "Wed, 13 Sep 2023 11:59:22 UTC"
+record: -1
+submission_language: kotlin

@@ -1,3 +1,16 @@
 custom_name: Topics
 content:
   - Local date and time
+  - Introduction to Interfaces
+  - Introduction to generic programming
+  - Generic functions
+  - Generics and Any
+  - Type Bounds
+  - Companion object
+  - Function references
+  - Thread as object
+  - Custom threads
+  - Thread management
+  - Thread synchronization
+  - Monitor and Thread synchronization
+  - Invoking functions
