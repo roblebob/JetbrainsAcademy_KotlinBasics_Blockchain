@@ -1,0 +1,22 @@
+type: code
+files:
+  - name: src/Main.kt
+    visible: true
+    highlight_level: NONE
+    text: |-
+      class MyStack<T>(data: List<T>) {
+          val items = data.toMutableList()
+      
+          // implement methods
+          fun push(data: T) {}
+      
+          fun pop(): T {}
+      }
+    learner_created: false
+feedback_link: https://hyperskill.org/learn/step/14706#comment
+status: Solved
+feedback:
+  message: <html>Correct solution</html>
+  time: "Mon, 18 Sep 2023 09:39:20 UTC"
+record: -1
+submission_language: kotlin

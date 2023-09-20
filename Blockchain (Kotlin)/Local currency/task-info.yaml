@@ -242,6 +242,247 @@ files:
           }
       }
     learner_created: false
+  - name: src/Myssage.kt
+    visible: true
+    text: |+
+      package blockchain
+      
+      class Myssage private constructor(val id: Int, val name: String, val text: String, val signature: ByteArray ) {
+      
+          override fun toString(): String {
+              return "$id# $name: $text"
+          }
+      
+          companion object {
+              @Volatile
+              private var total = 0
+              fun newInstance(name: String, text: String, signature: ByteArray): Myssage {
+                  return Myssage(++total, name, text, signature)
+              }
+          }
+      
+      }
+      
+      
+      class Signatures {
+      }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    learner_created: true
+  - name: src/Block.kt
+    visible: true
+    text: |-
+      package blockchain
+      
+      import java.security.MessageDigest
+      
+      
+      class Block(val id: Int,
+                  val previousHash: String,
+                  val nZeros: Int = 5,
+                  val minerName: String,
+                  val messages: MutableList<Myssage> = mutableListOf(),
+                  val tBefore: Long,
+      ) {
+          val t0: Long = System.currentTimeMillis()
+      
+          var tAfter: Long
+          var nTrials: Int = 0
+          var magicNumber: Int
+      
+      
+      
+          val hash: String
+              get() = applySha256(toString())
+      
+          val forDuration: Long
+              get() = tAfter - tBefore
+      
+          val futureNZeros: Int
+              get() =  when {
+                  forDuration < T_MIN -> nZeros + 1
+                  forDuration > T_MAX -> nZeros - 1
+                  else -> nZeros
+              }
+      
+      
+          init {
+              do {
+                  magicNumber = (0..Int.MAX_VALUE).random()
+                  nTrials++
+                  tAfter = System.currentTimeMillis()
+      
+      
+              } while (hash.substring(0, nZeros) != "0".repeat(nZeros))
+          }
+      
+      
+          override fun toString(): String {
+              return "Block(id=$id, previousHash='$previousHash', nZeros=$nZeros, miner=$minerName, messages=${messages.joinToString("\n") ?: ""}, tBefore=$tBefore, t0=$t0, tAfter=$tAfter, nTrials=$nTrials, magicNumber=$magicNumber)"
+          }
+      
+      
+      }
+      
+      
+      
+      
+      
+      fun applySha256(input: String): String {
+          return try {
+              val hexString = StringBuilder()
+              val digest = MessageDigest.getInstance("SHA-256")
+              /* Applies sha256 to our input */
+              val hash: ByteArray = MessageDigest.getInstance("SHA-256").digest(input.toByteArray(charset("UTF-8")))
+              for (elem in hash) {
+                  val hex = Integer.toHexString(0xff and elem.toInt())
+                  if (hex.length == 1) hexString.append('0')
+                  hexString.append(hex)
+              }
+              hexString.toString()
+          } catch (e: Exception) {
+              throw RuntimeException(e)
+          }
+      }
+    learner_created: true
+  - name: src/Miner.kt
+    visible: true
+    text: |+
+      package blockchain
+      
+      import java.security.KeyPairGenerator
+      import java.security.PrivateKey
+      import java.security.PublicKey
+      import java.security.Signature
+      
+      val NAMES = mutableSetOf("Tom", "Sarah", "Nick", "John", "Mary", "Alex", "Steve", "Anna")
+      
+      val KEY_LENGTH = 1024
+      
+      class Miner(val id: Int,  val publicKey: PublicKey, val privateKey: PrivateKey) : Thread() {
+      
+          private val _name: String = NAMES.random()
+      
+      
+      
+          init {
+              NAMES.remove(_name)
+              Blockchain.addMinersPublicKey(mName, publicKey)
+          }
+      
+          val mName: String
+              get() = "$id:$_name"
+      
+      
+          override fun run() {
+      
+              do {
+                  val block = Block(
+                      Blockchain.getNewId() ,
+                      Blockchain.getLastHash(),
+                      Blockchain.getNZeros(),
+                      mName,
+                      Blockchain.getMessages(),
+                      Blockchain.getLastTime()
+                  )
+              } while (!Blockchain.validateAndAdd( block))
+      
+              // ... so first message is definitely added after the first block was created
+              try {
+                  val text = MESSAGES.random()
+      
+                  val rsa = Signature.getInstance("SHA1withRSA")
+                  rsa.initSign(privateKey)
+                  rsa.update(text.toByteArray())
+                  Blockchain.addMessage(Myssage.newInstance( mName, text, rsa.sign()))
+              } catch (e: Exception) {
+                  println("----->" + e.message)
+              }
+          }
+      
+      
+      
+      
+      
+      
+          companion object {
+              val keyGen: KeyPairGenerator = KeyPairGenerator.getInstance("RSA")
+              var total = 0
+      
+              init {
+                  keyGen.initialize(KEY_LENGTH)
+              }
+      
+              fun getInstances(id: Int) : Miner {
+                  val pair = keyGen.generateKeyPair()
+                  return Miner(++total, pair.public, pair.private)
+              }
+      
+          }
+      
+      }
+    
+    learner_created: true
+  - name: src/Blockchain.kt
+    visible: true
+    text: "package blockchain\n\nimport java.security.PublicKey\nimport java.security.Signature\n\
+    \n\nobject Blockchain {\n    private val chain : MutableList<Block> = mutableListOf()\n\
+    \    private val messages : MutableList<Myssage> = mutableListOf()\n    private\
+    \ val minersPublicKeys : MutableMap<String, PublicKey> = mutableMapOf()\n\n  \
+    \  @Synchronized\n    fun addMinersPublicKey(name: String, publicKey: PublicKey)\
+    \ {\n        minersPublicKeys[name] = publicKey\n    }\n    fun getMessages():\
+    \ MutableList<Myssage> {\n        return messages.toMutableList()\n    }\n\n \
+    \   @Synchronized\n    fun addMessage(message: Myssage) {\n        val name =\
+    \ message.name\n        val publicKey = minersPublicKeys[name]\n        val sig\
+    \ = Signature.getInstance(\"SHA1withRSA\")\n        sig.initVerify(publicKey)\n\
+    \        sig.update(message.text.toByteArray())\n        if (sig.verify(message.signature))\n\
+    \            messages.add(message)\n    }\n\n\n    fun getNewId(): Int {\n   \
+    \     return chain.size + 1\n    }\n\n\n\n\n    fun getLastHash(): String {\n\
+    \        return if (chain.isEmpty()) \"0\" else chain.last().hash\n    }\n\n\n\
+    \    fun getLastTime() : Long {\n        return if (chain.isEmpty()) System.currentTimeMillis()\
+    \ else chain.last().tAfter\n    }\n\n\n    fun getNZeros(): Int {\n        return\
+    \ if (chain.isEmpty()) 0 else chain.last().futureNZeros\n    }\n\n\n    @Synchronized\n\
+    \    fun validateAndAdd(candidate: Block): Boolean {\n        if (\n         \
+    \   candidate.id == chain.size + 1\n            &&\n            (\n          \
+    \          (chain.isEmpty() && candidate.previousHash == \"0\")\n            \
+    \                || chain.last().hash == candidate.previousHash\n            \
+    \        )\n            &&\n            candidate.hash.substring(0, candidate.nZeros)\
+    \ == \"0\".repeat(candidate.nZeros)\n\n        )\n        {\n            chain.add(candidate)\n\
+    \            print()\n            messages.removeAll(candidate.messages)\n   \
+    \         return true\n        }\n\n        return false\n    }\n\n\n\n    @Synchronized\n\
+    \    fun validateAll(): Boolean {\n        when (chain.size) {\n            0\
+    \ -> return true\n            1 -> return  chain[0].hash.substring(0, chain[0].nZeros)\
+    \ == \"0\".repeat(chain[0].nZeros) &&\n                    chain[0].previousHash\
+    \ == \"0\"\n            else -> {\n                for (i in 1..chain.lastIndex)\
+    \ {\n                    if (chain[i - 1].hash != chain[i].previousHash) return\
+    \ false\n                    if (chain[i].hash.substring(0, chain[i].nZeros) !=\
+    \ \"0\".repeat(chain[i].nZeros)) return false\n                }\n           \
+    \     return true\n            }\n        }\n    }\n\n\n\n\n\n\n\n\n\n\n\n   \
+    \ @Synchronized\n    fun print() {\n\n        val o = chain.last()\n\n       \
+    \ println(\"\"\"Block: \nCreated by miner # ${o.minerName}\nId: ${o.id}\nTimestamp:\
+    \ ${o.t0}\nMagic number: ${o.magicNumber}\nHash of the previous block:\n${o.previousHash}\n\
+    Hash of the block:\n${o.hash}\nBlock data: ${if (o.messages.isEmpty()) \"no messages\"\
+    \ else \"\\n\" + o.messages.joinToString(\"\\n\")}\nBlock was generating for ${o.forDuration}\
+    \ seconds   (${o.nTrials} attempts)\n${  when (o.futureNZeros - o.nZeros) {\n\
+    \            1 -> \"N was increased to ${o.futureNZeros}\"\n            -1 ->\
+    \ \"N was decreased by 1 (${o.futureNZeros})\"\n            else -> \"N stays\
+    \ the same (${o.futureNZeros})\"\n        }}\n\"\"\")\n    }\n}\n\n\n"
+    learner_created: true
 feedback_link: https://hyperskill.org/learn/step/20397#comment
 status: Unchecked
 record: -1

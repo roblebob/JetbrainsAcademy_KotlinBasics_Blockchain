@@ -18,6 +18,12 @@
             <option value="$PROJECT_DIR$/Blockchain (Kotlin)/task/build/reports/tests" />
             <option value="$PROJECT_DIR$/Blockchain (Kotlin)/task/build/test-results" />
             <option value="$PROJECT_DIR$/Blockchain (Kotlin)/task/build/tmp" />
+            <option value="$PROJECT_DIR$/Topics (1)/BigInteger/Max" />
+            <option value="$PROJECT_DIR$/Topics (1)/BigInteger/Percentage" />
+            <option value="$PROJECT_DIR$/Topics (1)/BigInteger/Simple expression" />
+            <option value="$PROJECT_DIR$/Topics (1)/BigInteger/Statements" />
+            <option value="$PROJECT_DIR$/Topics (1)/BigInteger/The one" />
+            <option value="$PROJECT_DIR$/Topics (1)/BigInteger/Theory" />
             <option value="$PROJECT_DIR$/Topics (1)/Companion object/A good companion" />
             <option value="$PROJECT_DIR$/Topics (1)/Companion object/Companion" />
             <option value="$PROJECT_DIR$/Topics (1)/Companion object/Companion object vs object declaration" />
@@ -49,6 +55,7 @@
             <option value="$PROJECT_DIR$/Topics (1)/Introduction to generic programming/Match type parameter names" />
             <option value="$PROJECT_DIR$/Topics (1)/Introduction to generic programming/Random generic class" />
             <option value="$PROJECT_DIR$/Topics (1)/Introduction to generic programming/Specifying a generic class" />
+            <option value="$PROJECT_DIR$/Topics (1)/Introduction to generic programming/Stack Kotlin Flow" />
             <option value="$PROJECT_DIR$/Topics (1)/Introduction to generic programming/Theory" />
             <option value="$PROJECT_DIR$/Topics (1)/Invoking functions/Invoking functions" />
             <option value="$PROJECT_DIR$/Topics (1)/Invoking functions/Theory" />
@@ -63,6 +70,12 @@
             <option value="$PROJECT_DIR$/Topics (1)/Monitor and Thread synchronization/Theory" />
             <option value="$PROJECT_DIR$/Topics (1)/Monitor and Thread synchronization/Two methods, two statements" />
             <option value="$PROJECT_DIR$/Topics (1)/Monitor and Thread synchronization/What is wrong" />
+            <option value="$PROJECT_DIR$/Topics (1)/Regexps in use/Aaaaaaa to a" />
+            <option value="$PROJECT_DIR$/Topics (1)/Regexps in use/Find the difference" />
+            <option value="$PROJECT_DIR$/Topics (1)/Regexps in use/Limit" />
+            <option value="$PROJECT_DIR$/Topics (1)/Regexps in use/Serial number for game" />
+            <option value="$PROJECT_DIR$/Topics (1)/Regexps in use/Theory" />
+            <option value="$PROJECT_DIR$/Topics (1)/Regexps in use/Web colors" />
             <option value="$PROJECT_DIR$/Topics (1)/Thread as object/Counting threads" />
             <option value="$PROJECT_DIR$/Topics (1)/Thread as object/Is the thread a daemon" />
             <option value="$PROJECT_DIR$/Topics (1)/Thread as object/Theory" />

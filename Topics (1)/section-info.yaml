@@ -14,3 +14,5 @@ content:
   - Thread synchronization
   - Monitor and Thread synchronization
   - Invoking functions
+  - BigInteger
+  - Regexps in use
