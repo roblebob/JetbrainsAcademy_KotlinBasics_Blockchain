@@ -5,49 +5,38 @@ import java.security.PrivateKey
 import java.security.PublicKey
 import java.security.Signature
 
-val NAMES = mutableSetOf("Tom", "Sarah", "Nick", "John", "Mary", "Alex", "Steve", "Anna")
-
-val KEY_LENGTH = 1024
-
-class Miner(val id: Int,  val publicKey: PublicKey, val privateKey: PrivateKey) : Thread() {
-
-    private val _name: String = NAMES.random()
 
 
 
+class Miner(val id: Int, val publicKey: PublicKey, private val privateKey: PrivateKey) : Thread() {
     init {
-        NAMES.remove(_name)
-        Blockchain.addMinersPublicKey(mName, publicKey)
+        name = "miner$id"
+        Blockchain.addMinersPublicKey(name, publicKey)
     }
 
-    val mName: String
-        get() = "$id:$_name"
-
-
     override fun run() {
-
         do {
-            val block = Block(
-                Blockchain.getNewId() ,
-                Blockchain.getLastHash(),
-                Blockchain.getNZeros(),
-                mName,
-                Blockchain.getMessages(),
-                Blockchain.getLastTime()
-            )
-        } while (!Blockchain.validateAndAdd( block))
+            do {
+                val transactionsSigned: MutableList<TransactionSigned> = mutableListOf()
+                for (transactionProposed in Blockchain.getTransactionsProposed()) {
 
-        // ... so first message is definitely added after the first block was created
-        try {
-            val text = MESSAGES.random()
+                    val rsa = Signature.getInstance("SHA1withRSA")
+                    rsa.initSign(privateKey)
+                    rsa.update(transactionProposed.toString().toByteArray())
+                    transactionsSigned.add(TransactionSigned.newInstance(transactionProposed, rsa.sign()))
+                }
 
-            val rsa = Signature.getInstance("SHA1withRSA")
-            rsa.initSign(privateKey)
-            rsa.update(text.toByteArray())
-            Blockchain.addMessage(Myssage.newInstance( mName, text, rsa.sign()))
-        } catch (e: Exception) {
-            println("----->" + e.message)
-        }
+                val block = Block(
+                    Blockchain.getNewId(),
+                    Blockchain.getLastHash(),
+                    Blockchain.getLeadingZeros(),
+                    name,
+                    transactionsSigned,
+                    Blockchain.getLastTime()
+                )
+
+            } while (!Blockchain.validateAndAdd(block))
+        } while (N_BLOCKS > Blockchain.size())
     }
 
 
@@ -56,19 +45,17 @@ class Miner(val id: Int,  val publicKey: PublicKey, val privateKey: PrivateKey) 
 
 
     companion object {
-        val keyGen: KeyPairGenerator = KeyPairGenerator.getInstance("RSA")
-        var total = 0
+        private val keyGen: KeyPairGenerator = KeyPairGenerator.getInstance("RSA")
+        private var total = 0
 
         init {
             keyGen.initialize(KEY_LENGTH)
         }
 
-        fun getInstances(id: Int) : Miner {
+        fun newInstance() : Miner {
             val pair = keyGen.generateKeyPair()
             return Miner(++total, pair.public, pair.private)
         }
-
     }
-
 }
 

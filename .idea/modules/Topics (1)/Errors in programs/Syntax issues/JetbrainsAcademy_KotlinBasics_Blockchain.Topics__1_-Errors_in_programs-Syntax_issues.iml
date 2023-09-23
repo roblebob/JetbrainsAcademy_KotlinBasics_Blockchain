@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id=":Topics__1_-Errors_in_programs-Syntax_issues" external.linked.project.path="$MODULE_DIR$/../../../../../Topics (1)/Errors in programs/Syntax issues" external.root.project.path="$MODULE_DIR$/../../../../.." external.system.id="GRADLE" external.system.module.group="JetbrainsAcademy_KotlinBasics_Blockchain" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../../../../../Topics (1)/Errors in programs/Syntax issues">
+      <excludeFolder url="file://$MODULE_DIR$/../../../../../Topics (1)/Errors in programs/Syntax issues/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../../../Topics (1)/Errors in programs/Syntax issues/build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../../../../Topics (1)/Errors in programs/Syntax issues/out" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>

@@ -5,9 +5,9 @@ import java.security.MessageDigest
 
 class Block(val id: Int,
             val previousHash: String,
-            val nZeros: Int = 5,
+            val leadingZeros: Int = 5,
             val minerName: String,
-            val messages: MutableList<Myssage> = mutableListOf(),
+            val transactionsSigned: MutableList<TransactionSigned> = mutableListOf(),
             val tBefore: Long,
 ) {
     val t0: Long = System.currentTimeMillis()
@@ -17,6 +17,15 @@ class Block(val id: Int,
     var magicNumber: Int
 
 
+    init {
+        do {
+            magicNumber = (0..Int.MAX_VALUE).random()
+            nTrials++
+            tAfter = System.currentTimeMillis()
+
+        } while (hash.substring(0, leadingZeros) != "0".repeat(leadingZeros))
+    }
+
 
     val hash: String
         get() = applySha256(toString())
@@ -24,30 +33,17 @@ class Block(val id: Int,
     val forDuration: Long
         get() = tAfter - tBefore
 
-    val futureNZeros: Int
+    val futureLeadingZeros: Int
         get() =  when {
-            forDuration < T_MIN -> nZeros + 1
-            forDuration > T_MAX -> nZeros - 1
-            else -> nZeros
+            forDuration < T_MIN -> leadingZeros + 1
+            forDuration > T_MAX -> leadingZeros - 1
+            else -> leadingZeros
         }
 
 
-    init {
-        do {
-            magicNumber = (0..Int.MAX_VALUE).random()
-            nTrials++
-            tAfter = System.currentTimeMillis()
-
-
-        } while (hash.substring(0, nZeros) != "0".repeat(nZeros))
-    }
-
-
     override fun toString(): String {
-        return "Block(id=$id, previousHash='$previousHash', nZeros=$nZeros, miner=$minerName, messages=${messages.joinToString("\n") ?: ""}, tBefore=$tBefore, t0=$t0, tAfter=$tAfter, nTrials=$nTrials, magicNumber=$magicNumber)"
+        return "Block(id=$id, previousHash='$previousHash', leadingZeros=$leadingZeros, minerName='$minerName', transactionsSigned=${transactionsSigned.joinToString("\n")}, tBefore=$tBefore, t0=$t0, tAfter=$tAfter, nTrials=$nTrials, magicNumber=$magicNumber)"
     }
-
-
 }
 
 

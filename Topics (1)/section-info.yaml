@@ -16,3 +16,5 @@ content:
   - Invoking functions
   - BigInteger
   - Regexps in use
+  - Errors in programs
+  - Object declarations

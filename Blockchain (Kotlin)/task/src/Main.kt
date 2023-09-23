@@ -1,18 +1,10 @@
 package blockchain
 
-import java.security.MessageDigest
-
-val T_MIN = 100
-val T_MAX = 1000
-val N_MINERS = 5
-
-
-val MESSAGES = listOf(
-    "Hello! How are you?",
-    "It's not fair!\nYou always will be first because it is your blockchain!",
-    "I'm the best programmer in the world!",
-    "Anyway, thank you for this amazing chat."
-)
+const val T_MIN = 100
+const val T_MAX = 1000
+const val N_MINERS = 9
+const val N_BLOCKS = 15
+const val KEY_LENGTH = 1024
 
 
 fun main() {
@@ -20,7 +12,7 @@ fun main() {
 
     val miners = mutableListOf<Miner>()
     for (i in 1..N_MINERS) {
-        miners.add(Miner.getInstances(i))
+        miners.add(Miner.newInstance())
     }
     miners.forEach {
         it.start()

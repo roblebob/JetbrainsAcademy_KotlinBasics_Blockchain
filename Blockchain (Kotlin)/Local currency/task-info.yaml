@@ -242,48 +242,6 @@ files:
           }
       }
     learner_created: false
-  - name: src/Myssage.kt
-    visible: true
-    text: |+
-      package blockchain
-      
-      class Myssage private constructor(val id: Int, val name: String, val text: String, val signature: ByteArray ) {
-      
-          override fun toString(): String {
-              return "$id# $name: $text"
-          }
-      
-          companion object {
-              @Volatile
-              private var total = 0
-              fun newInstance(name: String, text: String, signature: ByteArray): Myssage {
-                  return Myssage(++total, name, text, signature)
-              }
-          }
-      
-      }
-      
-      
-      class Signatures {
-      }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    learner_created: true
   - name: src/Block.kt
     visible: true
     text: |-
@@ -482,6 +440,51 @@ files:
     \            1 -> \"N was increased to ${o.futureNZeros}\"\n            -1 ->\
     \ \"N was decreased by 1 (${o.futureNZeros})\"\n            else -> \"N stays\
     \ the same (${o.futureNZeros})\"\n        }}\n\"\"\")\n    }\n}\n\n\n"
+    learner_created: true
+  - name: src/TransactionSigned.kt
+    visible: true
+    text: |+
+      package blockchain
+      
+      class Myssage private constructor(val id: Int, val name: String, val text: String, val signature: ByteArray ) {
+      
+          override fun toString(): String {
+              return "$id# $name: $text"
+          }
+      
+          companion object {
+              @Volatile
+              private var total = 0
+              fun newInstance(name: String, text: String, signature: ByteArray): Myssage {
+                  return Myssage(++total, name, text, signature)
+              }
+          }
+      
+      }
+      
+      
+      class Signatures {
+      }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    learner_created: true
+  - name: src/TransactionProposed.kt
+    visible: true
     learner_created: true
 feedback_link: https://hyperskill.org/learn/step/20397#comment
 status: Unchecked

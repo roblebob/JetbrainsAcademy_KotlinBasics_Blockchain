@@ -1,0 +1,17 @@
+type: code
+files:
+  - name: src/Main.kt
+    visible: true
+    highlight_level: NONE
+    text: |-
+      object Math {
+          //TODO
+      }
+    learner_created: false
+feedback_link: https://hyperskill.org/learn/step/10706#comment
+status: Solved
+feedback:
+  message: <html>Correct solution</html>
+  time: "Sat, 23 Sep 2023 10:20:06 UTC"
+record: -1
+submission_language: kotlin
