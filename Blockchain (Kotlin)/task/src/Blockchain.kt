@@ -3,43 +3,50 @@ package blockchain
 import java.security.PublicKey
 import java.security.Signature
 
-val NAMES = mutableSetOf("Tom", "Sarah", "Nick", "John", "Mary", "Alex", "Steve", "Anna")
+val NAMES = mutableSetOf("Blockchain", "Tom", "Sarah", "Nick", "John", /* "Mary", "Alex", "Steve", "Anna" */ )
 
 
 object Blockchain {
-    private val chain: MutableList<Block> = mutableListOf()
-    private val transactionsProposed: MutableList<TransactionProposed> = mutableListOf()
-    private val minersPublicKeys: MutableMap<String, PublicKey> = mutableMapOf()
-    private val ledger: MutableMap<String, Int> = mutableMapOf()
+    private val _chain: MutableList<Block> = mutableListOf()
+    private val _transactionProposals: MutableList<TransactionProposal> = mutableListOf()
+    private val _minersPublicKeys: MutableMap<String, PublicKey> = mutableMapOf()
+    private val _ledger: MutableMap<String, Int> = mutableMapOf()
+
+    fun initLedgerEntry(name: String) {
+        _ledger[name] = 0
+    }
 
     init {
         for (name in NAMES) {
-            ledger[name] = 0
+            _ledger[name] = 0
         }
     }
 
 
-    fun size() = chain.size
-    fun getNewId() = chain.size + 1
-    fun getTransactionsProposed(): MutableList<TransactionProposed> = transactionsProposed.toMutableList()
-    fun getLastHash() =  if (chain.isEmpty()) "0" else chain.last().hash
-    fun getLastTime(): Long = if (chain.isEmpty()) System.currentTimeMillis() else chain.last().tAfter
-    fun getLeadingZeros(): Int = if (chain.isEmpty()) 0 else chain.last().futureLeadingZeros
-
+    fun size() = _chain.size
+    fun getNewId() = _chain.size + 1
+    fun getTransactionsProposed(): MutableList<TransactionProposal> = _transactionProposals.toMutableList()
+    fun getLastHash() =  if (_chain.isEmpty()) "0" else _chain.last().hash
+    fun getLastTime(): Long = if (_chain.isEmpty()) System.currentTimeMillis() else _chain.last().tAfter
+    fun getLeadingZeros(): Int = if (_chain.isEmpty()) 0 else _chain.last().futureLeadingZeros
+    fun getLedgerCopy(): MutableMap<String, Int> = _ledger.toMutableMap()
 
 
     @Synchronized
     fun addMinersPublicKey(name: String, publicKey: PublicKey) {
-        minersPublicKeys[name] = publicKey
+        _minersPublicKeys[name] = publicKey
     }
 
 
-    @Synchronized
-    fun generateTransactionsProposed() {
 
-        val ledgerTemp = ledger.toMutableMap()
+
+    @Synchronized
+    fun generateTransactionsProposals() {
+
+        val ledgerTemp = _ledger.toMutableMap()
 
         repeat((1..10).random()) {
+
 
             val sender = ledgerTemp.filter { it.value > 0 }.keys.random()
             if (sender.isEmpty()) return
@@ -49,7 +56,7 @@ object Blockchain {
 
             val amount = (1..ledgerTemp[sender]!!).random()
 
-            transactionsProposed.add(TransactionProposed.newInstance(sender, receiver, amount))
+            _transactionProposals.add(TransactionProposal.newInstance(sender, receiver, amount))
 
             ledgerTemp[sender]   = ledgerTemp[sender]!!   - amount
             ledgerTemp[receiver] = ledgerTemp[receiver]!! + amount
@@ -59,84 +66,54 @@ object Blockchain {
 
 
 
-    @Synchronized
-    fun addTransactionProposal(transactionProposed: TransactionProposed) {
-        val sender = transactionProposed.sender
-        val receiver = transactionProposed.receiver
-
-        if (ledger.containsKey(sender)) {
-
-            // abort if sender has not enough money
-            if (ledger[sender]!! < transactionProposed.amount) {
-                println("Not enough money")
-                return
-            }
-
-            // else update ledger
-            ledger[sender] = ledger[sender]!! - transactionProposed.amount
-            ledger[receiver] = if (ledger.containsKey(receiver)) ledger[receiver]!! + transactionProposed.amount else transactionProposed.amount
-
-        } else {
-            println("Sender not found")
-            return
-        }
-
-
-
-        val sig = Signature.getInstance("SHA1withRSA")
-        sig.initVerify(publicKey)
-        sig.update(transaction.text.toByteArray())
-        if (sig.verify(transaction.signature))
-            transactions.add(transaction)
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     @Synchronized
     fun validateAndAdd(candidate: Block): Boolean {
         if (
-            candidate.id == chain.size + 1
+            candidate.id == _chain.size + 1
             &&
             (
-                    (chain.isEmpty() && candidate.previousHash == "0")
-                            || chain.last().hash == candidate.previousHash
+                    (_chain.isEmpty() && candidate.previousHash == "0")
+                            || _chain.last().hash == candidate.previousHash
             )
             &&
             candidate.hash.substring(0, candidate.leadingZeros) == "0".repeat(candidate.leadingZeros)
 
         )
         {
-            chain.add( candidate)
+            //println("start validating  $candidate")
+            for (transactionSigned in candidate.transactionsSigned) {
+                val sender = transactionSigned.proposal.sender
+                val receiver = transactionSigned.proposal.receiver
+                val amount = transactionSigned.proposal.amount
+                val miner = candidate.minerName
 
+                // abort if the transaction is invalid
+                if (sender == receiver  ||  _ledger[sender]!! < amount) {
+                    _transactionProposals.remove(transactionSigned.proposal)
+                    println("aborted, because the transaction is invalid")
+                    return false
+                }
 
+                // checking the signature
+                val rsa = Signature.getInstance("SHA1withRSA")
+                rsa.initVerify(_minersPublicKeys[miner])
+                rsa.update(transactionSigned.proposal.toString().toByteArray())
+                if (!rsa.verify(transactionSigned.signature)) {
+                    println("aborted, because the signature is invalid")
+                    return false
+                }
 
+                // execute transaction
+                _ledger[sender] = _ledger[sender]!! - amount
+                _ledger[receiver] = _ledger[receiver]!! + amount
+                _transactionProposals.remove(transactionSigned.proposal)
+            }
 
-
-            ledger[sender] = ledger[sender]!! - transactionProposed.amount
-            ledger[receiver] = if (ledger.containsKey(receiver)) ledger[receiver]!! + transactionProposed.amount else transactionProposed.amount
-
-
+            _chain.add( candidate)
+            _ledger[ candidate.minerName] = _ledger[ candidate.minerName]!! + 100
             print()
-            messages.removeAll(candidate.messages)
+            generateTransactionsProposals()
             return true
         }
 
@@ -144,16 +121,30 @@ object Blockchain {
     }
 
 
+
+
+
+
+
+
+
+
+
+
     @Synchronized
     fun validateAll(): Boolean {
-        when (chain.size) {
+        // TODO: addidional checks:
+        //  - increasing transaction id,
+        //  - increasing block id,
+        //  - increasing  tBefore, t0, tAfter,
+        when (_chain.size) {
             0 -> return true
-            1 -> return  chain[0].hash.substring(0, chain[0].leadingZeros) == "0".repeat(chain[0].leadingZeros) &&
-                    chain[0].previousHash == "0"
+            1 -> return  _chain[0].hash.substring(0, _chain[0].leadingZeros) == "0".repeat(_chain[0].leadingZeros) &&
+                    _chain[0].previousHash == "0"
             else -> {
-                for (i in 1..chain.lastIndex) {
-                    if (chain[i - 1].hash != chain[i].previousHash) return false
-                    if (chain[i].hash.substring(0, chain[i].leadingZeros) != "0".repeat(chain[i].leadingZeros)) return false
+                for (i in 1.._chain.lastIndex) {
+                    if (_chain[i - 1].hash != _chain[i].previousHash) return false
+                    if (_chain[i].hash.substring(0, _chain[i].leadingZeros) != "0".repeat(_chain[i].leadingZeros)) return false
                 }
                 return true
             }
@@ -164,11 +155,11 @@ object Blockchain {
     @Synchronized
     fun print() {
 
-        val o = chain.last()
+        val o = _chain.last()
 
         println("""Block: 
 Created by miner: ${o.minerName}
-${o.minerName} gets 100 VC
+${o.minerName} gets 100 VC   (${_ledger.entries.joinToString(" ")})
 Id: ${o.id}
 Timestamp: ${o.t0}
 Magic number: ${o.magicNumber}

@@ -12,18 +12,34 @@ class Miner(val id: Int, val publicKey: PublicKey, private val privateKey: Priva
     init {
         name = "miner$id"
         Blockchain.addMinersPublicKey(name, publicKey)
+        Blockchain.initLedgerEntry(name)
     }
 
     override fun run() {
         do {
             do {
+                val ledgerTemp = Blockchain.getLedgerCopy()
                 val transactionsSigned: MutableList<TransactionSigned> = mutableListOf()
                 for (transactionProposed in Blockchain.getTransactionsProposed()) {
 
+                    // checking if the transaction is valid, and remove those that are not
+
+                    val sender = transactionProposed.sender
+                    val receiver = transactionProposed.receiver
+                    val amount = transactionProposed.amount
+
+                    if (sender == receiver) continue
+                    if (ledgerTemp[sender]!! < amount) continue
+
+                    // updating the temporäry ledger
+                    ledgerTemp[sender] = ledgerTemp[sender]!! - amount
+                    ledgerTemp[receiver] = ledgerTemp[receiver]!! + amount
+
+                    // signing the transaction
                     val rsa = Signature.getInstance("SHA1withRSA")
                     rsa.initSign(privateKey)
                     rsa.update(transactionProposed.toString().toByteArray())
-                    transactionsSigned.add(TransactionSigned.newInstance(transactionProposed, rsa.sign()))
+                    transactionsSigned.add(TransactionSigned(transactionProposed, rsa.sign()))
                 }
 
                 val block = Block(
@@ -35,6 +51,7 @@ class Miner(val id: Int, val publicKey: PublicKey, private val privateKey: Priva
                     Blockchain.getLastTime()
                 )
 
+                if (N_BLOCKS <= Blockchain.size()) break
             } while (!Blockchain.validateAndAdd(block))
         } while (N_BLOCKS > Blockchain.size())
     }

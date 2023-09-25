@@ -42,7 +42,7 @@ class Block(val id: Int,
 
 
     override fun toString(): String {
-        return "Block(id=$id, previousHash='$previousHash', leadingZeros=$leadingZeros, minerName='$minerName', transactionsSigned=${transactionsSigned.joinToString("\n")}, tBefore=$tBefore, t0=$t0, tAfter=$tAfter, nTrials=$nTrials, magicNumber=$magicNumber)"
+        return "Block(id=$id, previousHash='$previousHash', leadingZeros=$leadingZeros, minerName='$minerName', transactionsSigned=${transactionsSigned.joinToString(" ")}, tBefore=$tBefore, t0=$t0, tAfter=$tAfter, nTrials=$nTrials, magicNumber=$magicNumber)"
     }
 }
 

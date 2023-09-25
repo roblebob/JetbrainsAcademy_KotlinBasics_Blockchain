@@ -3,7 +3,7 @@ hyperskill_project:
   ide_files: https://cogniterra.org/media/attachments/lesson/26636/additional_files.json
   is_template_based: false
   use_ide: true
-update_date: "Sat, 23 Sep 2023 17:36:19 UTC"
+update_date: "Mon, 25 Sep 2023 15:28:28 UTC"
 stages:
   - id: 1325
     step: 20392
@@ -22,7 +22,7 @@ stages:
     is_completed: true
   - id: 1330
     step: 20397
-    is_completed: false
+    is_completed: true
 topics:
   0:
     - title: Modulo division
@@ -234,10 +234,6 @@ topics:
       theory_id: 14723
     - title: Introduction to software architecture
       theory_id: 15368
-    - title: Interfaces
-      theory_id: 9640
-    - title: Design principles
-      theory_id: 8956
     - title: Files
       theory_id: 13025
     - title: Reading files
@@ -246,6 +242,10 @@ topics:
       theory_id: 9710
     - title: File hierarchies
       theory_id: 15171
+    - title: Interfaces
+      theory_id: 9640
+    - title: Design principles
+      theory_id: 8956
     - title: Inheritance
       theory_id: 9844
     - title: Inheritance
